@@ -10,11 +10,18 @@ interface Props {
 }
 
 const { image } = Astro.props;
+const publicPath = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
 ---
 
 <div class="hero-backdrop" aria-hidden="true">
   <div class="hero-backdrop__visual">
-    <div class="hero-backdrop__logo" aria-hidden="true"></div>
+    <div
+      class="hero-backdrop__logo"
+      aria-hidden="true"
+      style={`--brand-logo-mask: url("${publicPath}logo.svg")`}
+    ></div>
     <div class="hero-backdrop__image-clip">
       <Image
         src={image}
@@ -80,8 +87,8 @@ const { image } = Astro.props;
     z-index: 1;
     border-radius: var(--radius);
     background-color: color-mix(in srgb, var(--color-brand-50) 30%, transparent);
-    -webkit-mask: url('/logo.svg') center / 140% auto no-repeat;
-    mask: url('/logo.svg') center / 140% auto no-repeat;
+    -webkit-mask: var(--brand-logo-mask) center / 140% auto no-repeat;
+    mask: var(--brand-logo-mask) center / 140% auto no-repeat;
     pointer-events: none;
   }
 

@@ -3,6 +3,9 @@ import { useState } from 'react';
 import { Check, Ellipsis, UserKey } from 'lucide-react';
 
 const contactNumber = '54 9XXXX-XXXX';
+const publicPath = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
 
 export default function HeaderNav() {
   const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'error'>('idle');
@@ -28,7 +31,7 @@ export default function HeaderNav() {
           aria-label="G2 - Início"
           className="flex items-center focus-visible:outline-2 focus-visible:outline-white"
         >
-          <img src="/g2.png" alt="G2" className="size-20 object-contain" />
+          <img src={`${publicPath}g2.png`} alt="G2" className="size-20 object-contain" />
         </a>
 
         <button
@@ -40,7 +43,7 @@ export default function HeaderNav() {
           {copyStatus === 'copied' ? (
             <Check aria-hidden="true" className="size-5 text-green-600" />
           ) : (
-            <img src="/whatsapp.svg" alt="" aria-hidden="true" className="size-5" />
+            <img src={`${publicPath}whatsapp.svg`} alt="" aria-hidden="true" className="size-5" />
           )}
           <span>
             {copyStatus === 'copied'

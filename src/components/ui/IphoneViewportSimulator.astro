@@ -1,3 +1,10 @@
+---
+const publicPath = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+const phoneFrameSrc = `${publicPath}IPhone_16_Vector.svg`;
+---
+
 <div class="iphone-simulator">
   <button
     class="iphone-simulator__toggle"
@@ -8,7 +15,7 @@
     aria-label="Simular viewport de iPhone 16"
     title="Simular viewport de iPhone 16"
   >
-    <img src="/IPhone_16_Vector.svg" alt="" aria-hidden="true" />
+    <img src={phoneFrameSrc} alt="" aria-hidden="true" />
   </button>
 
   <dialog
@@ -41,7 +48,7 @@
         ></iframe>
         <img
           class="iphone-simulator__frame"
-          src="/IPhone_16_Vector.svg"
+          src={phoneFrameSrc}
           alt=""
           aria-hidden="true"
         />

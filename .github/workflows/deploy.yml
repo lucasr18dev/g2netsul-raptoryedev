@@ -19,6 +19,8 @@ jobs:
       
       - name: Instalar, construir e preparar upload
         uses: withastro/action@v3
+        with:
+          node-version: 22.12.0
 
   deploy:
     needs: build

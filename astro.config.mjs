@@ -6,6 +6,7 @@ import sitemap from "@astrojs/sitemap";
 
 // https://astro.build/config
 export default defineConfig({
+  output: 'static',
   // URL final do site do seu cliente (ou domínio temporário)
   site: 'https://lucasr18dev.github.io',
   base: '/g2netsul-raptoryedev',

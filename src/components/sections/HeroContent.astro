@@ -1,0 +1,44 @@
+---
+// src/components/hero/HeroContent.astro
+// Bloco de texto do hero: H1, descrição opcional e um slot para ações (CTA).
+// A descrição aceita <br> (set:html): use só com texto próprio, nunca com conteúdo de usuário.
+// Mobile: texto escuro empilhado ACIMA do painel (order-first). Desktop: coluna esquerda, ao lado do painel.
+interface Props {
+  title: string[];
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+const hasActions = Astro.slots.has('default');
+---
+
+<div
+  class="relative z-10 order-first flex flex-col justify-start min-[24.5rem]:max-md:justify-center px-6 pt-8 pb-6 text-center text-brand-910 sm:px-10 sm:pt-12 lg:h-full lg:justify-center lg:px-12 lg:py-20 lg:text-left xl:px-16"
+>
+  <div class="mx-auto flex w-full max-w-lg flex-col gap-6 min-[24.5rem]:max-md:translate-y-[30px]">
+    <h1
+      id="hero-title"
+      class="leading-[1.05] font-extrabold tracking-tight text-[min(6.6vw,2.25rem)] sm:text-4xl md:text-5xl lg:text-[clamp(1.75rem,2.8vw,2.75rem)]"
+    >
+      {title.map((line) => <span class="block whitespace-nowrap">{line}</span>)}
+    </h1>
+
+    <slot name="stats" />
+
+    {
+      description && (
+        <p
+          class="text-base/6 text-grey-1 sm:text-base/7 md:text-lg/7 lg:whitespace-nowrap"
+          set:html={description}
+        />
+      )
+    }
+    {
+      hasActions && (
+        <div class="flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:items-start lg:justify-start">
+          <slot />
+        </div>
+      )
+    }
+  </div>
+</div>

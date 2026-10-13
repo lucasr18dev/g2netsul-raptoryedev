@@ -1,0 +1,69 @@
+---
+// Services.astro
+import ServicesCarousel from '../ui/ServicesCarousel.jsx';
+
+interface Props {
+  title?: string;
+  description?: string;
+  class?: string;
+}
+
+const {
+  title = 'Muito mais do que apenas internet...',
+  description,
+  class: className = '',
+} = Astro.props;
+
+// Dados dos serviços: edite aqui, o layout não muda.
+// - variant: 'service' | 'product' (alterna o design do card)
+// - icon: 'mobile' | 'router' | 'phone' | 'camera' (um por produto)
+// - "\n" no title quebra a linha (o card usa whitespace-pre-line)
+// Ordem intercalada: móvel, roteador, telefonia, câmeras.
+const services = [
+  {
+    id: 'mobile',
+    variant: 'service',
+    icon: 'mobile',
+    title: 'Internet\nMóvel',
+    imageSrc: '/chip.png',
+  },
+  {
+    id: 'router',
+    variant: 'product',
+    icon: 'router',
+    title: 'Roteador\nExtra',
+    imageSrc: '/router.png',
+  },
+  {
+    id: 'phone',
+    variant: 'service',
+    icon: 'phone',
+    title: 'Telefonia\nFixa',
+    imageSrc: '/telefone.png',
+  },
+  {
+    id: 'cameras',
+    variant: 'product',
+    icon: 'camera',
+    title: 'Câmeras de\nVigilância',
+    imageSrc: '/camera.png',
+  },
+];
+---
+
+<section
+  id="services"
+  aria-labelledby="services-title"
+  class:list={['px-6 pt-8 pb-16 md:pt-12 md:pb-24', className]}
+>
+  <div class="mx-auto max-w-7xl ">
+    <header class="flex max-w-7xl flex-col items-center gap-3 text-center">
+      <h2 id="services-title" class="text-4xl pb-12 md:text-4xl font-extrabold tracking-tight text-brand-950 leading-[1.05]">
+        {title}
+      </h2>
+      {description && <p class="text-base text-zinc-600 leading-relaxed">{description}</p>}
+    </header>
+
+    <ServicesCarousel client:visible services={services} />
+  </div>
+</section>

@@ -1,0 +1,30 @@
+---
+// HeaderMain renders <header> and FooterMain renders <footer> at the root.
+// The main element is the target of BaseLayout's skip link.
+import type { ComponentProps } from 'astro/types';
+import BaseLayout from './common/BaseLayout.astro';
+import HeaderMain from '../components/sections/HeaderMain.astro';
+import FooterMain from '../components/sections/FooterMain.astro';
+import IphoneViewportSimulator from '../components/ui/IphoneViewportSimulator.astro';
+
+type Props = Partial<ComponentProps<typeof BaseLayout>>;
+
+const {
+  title = 'Conectividade e Internet Fibra Óptica',
+  description = 'Conheça nossos serviços de internet e conectividade.',
+  ...rest
+} = Astro.props;
+---
+
+<BaseLayout title={title} description={description} {...rest}>
+  <slot name="head" slot="head" />
+
+  <HeaderMain />
+
+  <main id="main-content" tabindex="-1" class="flex-1 focus:outline-none">
+    <slot />
+  </main>
+
+  <FooterMain />
+  <IphoneViewportSimulator />
+</BaseLayout>

@@ -1,0 +1,272 @@
+<div class="iphone-simulator">
+  <button
+    class="iphone-simulator__toggle"
+    type="button"
+    aria-haspopup="dialog"
+    aria-expanded="false"
+    aria-controls="iphone-simulator-dialog"
+    aria-label="Simular viewport de iPhone 16"
+    title="Simular viewport de iPhone 16"
+  >
+    <img src="/IPhone_16_Vector.svg" alt="" aria-hidden="true" />
+  </button>
+
+  <dialog
+    class="iphone-simulator__dialog"
+    id="iphone-simulator-dialog"
+    aria-label="Simulação de viewport de iPhone 16"
+  >
+    <button class="iphone-simulator__close" type="button" aria-label="Fechar simulação">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <div class="iphone-simulator__stage">
+      <div class="iphone-simulator__copy">
+        <h3 class="text-4xl">Simulação de Visualização<br />em Dispositivos Móveis</h3>
+        <h2 class="text-2xl pt-4">Filosofias de Design:</h2>
+        <ul class="mt-8 list-disc space-y-5 pl-6 text-lg font-medium leading-relaxed">
+          <li>Texto estruturado, sem sobrecarga de informações</li>
+          <li>Liberdade real de escolha: todos os planos entregam alto valor, sem sensação de perda</li>
+          <li>Maior peso visual e estratégico para os serviços, corrigindo a falta de visibilidade atual</li>
+          <li>Localizador de lojas aprimorado com atalho direto para os aplicativos de navegação (GPS)</li>
+        </ul>
+      </div>
+      <div class="iphone-simulator__device">
+        <iframe
+          class="iphone-simulator__viewport"
+          title="Site em um viewport de iPhone 16"
+          width="393"
+          height="852"
+          loading="lazy"
+          referrerpolicy="same-origin"
+        ></iframe>
+        <img
+          class="iphone-simulator__frame"
+          src="/IPhone_16_Vector.svg"
+          alt=""
+          aria-hidden="true"
+        />
+      </div>
+    </div>
+  </dialog>
+</div>
+
+<style>
+  /* --- BOTÃO TOGGLE (Mantido igual) --- */
+  .iphone-simulator__toggle {
+    position: fixed;
+    z-index: 40;
+    right: 1.5rem;
+    bottom: 1.5rem;
+    display: none;
+    width: 3.5rem;
+    height: 3.5rem;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgb(255 255 255 / 18%);
+    border-radius: 9999px;
+    background: #0031bc;
+    box-shadow: 0 8px 24px rgb(0 0 41 / 24%);
+    cursor: pointer;
+    transition: transform 180ms ease, background-color 180ms ease;
+  }
+
+  .iphone-simulator__toggle:hover {
+    transform: translateY(-2px);
+    background: #013cfc;
+  }
+
+  .iphone-simulator__toggle:focus-visible,
+  .iphone-simulator__close:focus-visible {
+    outline: 3px solid #60c8fc;
+    outline-offset: 3px;
+  }
+
+  .iphone-simulator__toggle img {
+    width: 1.4rem;
+    height: 2.8rem;
+    object-fit: contain;
+  }
+
+  /* --- DIALOG E FUNDO --- */
+  .iphone-simulator__dialog {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    max-width: none;
+    max-height: none;
+    overflow: hidden;
+    border: 0;
+    padding: 0;
+    background: transparent;
+  }
+
+  .iphone-simulator__dialog[open] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .iphone-simulator__dialog::backdrop {
+    background: rgb(0 0 20 / 72%);
+    backdrop-filter: blur(4px);
+  }
+
+  .iphone-simulator__close {
+    position: fixed;
+    z-index: 50;
+    top: 1.25rem;
+    right: 1.5rem;
+    display: grid;
+    width: 2.75rem;
+    height: 2.75rem;
+    place-items: center;
+    border: 1px solid rgb(255 255 255 / 35%);
+    border-radius: 9999px;
+    background: rgb(10 10 10 / 72%);
+    color: white;
+    cursor: pointer;
+    font-size: 1.75rem;
+    line-height: 1;
+  }
+
+  /* --- ESTRUTURA DO SIMULADOR --- */
+  .iphone-simulator__stage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  .iphone-simulator__copy {
+    display: none;
+  }
+
+  .iphone-simulator__device {
+    position: relative;
+    width: 430px; /* Tamanho total do SVG (imagem) */
+    height: 940px;
+    flex: none;
+    transform: scale(var(--iphone-simulator-scale, 1));
+    transform-origin: center center;
+  }
+
+.iphone-simulator__viewport {
+    position: absolute;
+    top: 44px;  
+    left: 18.5px;
+    z-index: 3; /* Alterado de 1 para 3 para sobrepor o SVG */
+    display: block;
+    width: 393px;
+    height: 852px;
+    border: 0;
+    border-radius: 60px; /* Mantém os cantos arredondados por CSS */
+    background: white;
+  }
+
+  .iphone-simulator__frame {
+    position: absolute;
+    inset: 0;
+    z-index: 2; /* SVG fica NA FRENTE do iframe */
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    /* MÁGICA AQUI: Deixa você clicar e rolar o iframe que está por baixo */
+    pointer-events: none; 
+  }
+
+  @media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+    .iphone-simulator__toggle {
+      display: flex;
+    }
+
+    .iphone-simulator__stage {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: center;
+      gap: 0;
+      padding: 3rem;
+    }
+
+    .iphone-simulator__copy {
+      display: block;
+      justify-self: center;
+      width: min(100%, 36rem);
+      max-width: 36rem;
+      color: white;
+      font-size: clamp(2rem, 4vw, 4rem);
+      font-weight: 800;
+      line-height: 1.1;
+      text-align: left;
+    }
+
+    .iphone-simulator__copy h3 {
+      margin: 0;
+    }
+
+    .iphone-simulator__device {
+      justify-self: center;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .iphone-simulator__toggle {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('.iphone-simulator__toggle');
+  const dialog = document.querySelector<HTMLDialogElement>('#iphone-simulator-dialog');
+  const closeButton = document.querySelector<HTMLButtonElement>('.iphone-simulator__close');
+  const viewport = document.querySelector<HTMLIFrameElement>('.iphone-simulator__viewport');
+  const device = document.querySelector<HTMLDivElement>('.iphone-simulator__device');
+
+  if (toggle && dialog && closeButton && viewport && device) {
+    const updateScale = () => {
+      // Deixa uma margem de segurança de 48px na tela
+      const scale = Math.min(
+        1,
+        (window.innerWidth * 0.5 - 48) / 430,
+        (window.innerHeight - 48) / 940,
+      );
+      device.style.setProperty('--iphone-simulator-scale', String(scale));
+    };
+
+    toggle.addEventListener('click', () => {
+      updateScale();
+      viewport.src = window.location.href; // Carrega a página atual no iframe
+      dialog.showModal();
+      toggle.setAttribute('aria-expanded', 'true');
+      closeButton.focus();
+    });
+
+    closeButton.addEventListener('click', () => dialog.close());
+
+    dialog.addEventListener('click', (event) => {
+      // Fecha se clicar fora do container do dispositivo
+      if (event.target === dialog) dialog.close();
+    });
+
+    dialog.addEventListener('close', () => {
+      toggle.setAttribute('aria-expanded', 'false');
+      if (toggle.getClientRects().length > 0) toggle.focus();
+    });
+
+    window.addEventListener('resize', () => {
+      if (dialog.open) {
+        const isDesktop = window.matchMedia(
+          '(min-width: 1024px) and (hover: hover) and (pointer: fine)',
+        ).matches;
+
+        if (!isDesktop) {
+          dialog.close();
+        } else {
+          updateScale();
+        }
+      }
+    });
+  }
+</script>

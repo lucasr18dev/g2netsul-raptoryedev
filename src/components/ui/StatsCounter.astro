@@ -1,0 +1,190 @@
+---
+interface Stat {
+  value: number;
+  label: string;
+  prefix?: string;
+  suffix?: string;
+  decimals?: number;
+}
+
+interface Props {
+  stats: Stat[];
+  mobile?: boolean;
+}
+
+const { stats, mobile = false } = Astro.props;
+
+const formatValue = (value: number, decimals = 0) =>
+  new Intl.NumberFormat('pt-BR', {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  }).format(value);
+---
+
+<aside class:list={['stats-counter', { 'stats-counter--mobile': mobile }]} aria-label="Números da provedora">
+  <dl class="stats-counter__list">
+    {stats.map(({ value, label, prefix = '', suffix = '', decimals = 0 }) => (
+      <div class="stats-counter__item">
+        <dt class="stats-counter__label">{label}</dt>
+        <dd class="stats-counter__value">
+          <span
+            class="stats-counter__number"
+            data-counter
+            data-value={value}
+            data-decimals={decimals}
+          >
+            {formatValue(value, decimals)}
+          </span>
+          <span>{prefix}{suffix}</span>
+        </dd>
+      </div>
+    ))}
+  </dl>
+</aside>
+
+<style>
+  .stats-counter {
+    display: none;
+  }
+
+  .stats-counter--mobile {
+    display: block;
+  }
+
+  .stats-counter__list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: 0;
+  }
+
+  .stats-counter--mobile .stats-counter__list {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-counter__item {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 0 0.75rem;
+    text-align: left;
+  }
+
+  .stats-counter--mobile .stats-counter__item {
+    align-items: center;
+    padding: 0.75rem 0;
+    text-align: center;
+  }
+
+  .stats-counter--mobile .stats-counter__value {
+    font-size: 1.5rem;
+  }
+
+  .stats-counter--mobile .stats-counter__label {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  .stats-counter__item:first-child {
+    padding-left: 0;
+  }
+
+  .stats-counter__item + .stats-counter__item {
+    border-left: 1px solid rgb(142 154 168 / 30%);
+  }
+
+  .stats-counter--mobile .stats-counter__item + .stats-counter__item {
+    border-top: 1px solid rgb(142 154 168 / 30%);
+    border-left: 0;
+  }
+
+  .stats-counter__value {
+    order: -1;
+    margin: 0;
+    color: var(--color-brand-600);
+    font-size: clamp(1rem, 1.5vw, 1.4rem);
+    font-weight: 800;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stats-counter__label {
+    margin-top: 0.4rem;
+    color: var(--color-grey-1);
+    font-size: clamp(0.55rem, 0.7vw, 0.7rem);
+    line-height: 1.25;
+  }
+
+  @media (min-width: 64rem) {
+    .stats-counter {
+      display: block;
+    }
+
+    .stats-counter--mobile {
+      display: none;
+    }
+  }
+
+</style>
+
+<script>
+  const counters = document.querySelectorAll<HTMLElement>('[data-counter]');
+
+  const formatCounter = (value: number, decimals: number) =>
+    new Intl.NumberFormat('pt-BR', {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals,
+    }).format(value);
+
+  const animateCounter = (counter: HTMLElement) => {
+    const target = Number(counter.dataset.value);
+    const decimals = Number(counter.dataset.decimals ?? 0);
+    const duration = 1500;
+    const startTime = performance.now();
+
+    const update = (now: number) => {
+      const progress = Math.min((now - startTime) / duration, 1);
+      const easedProgress = 1 - (1 - progress) ** 4;
+      const currentValue = target * easedProgress;
+
+      counter.textContent = formatCounter(currentValue, decimals);
+
+      if (progress < 1) requestAnimationFrame(update);
+    };
+
+    requestAnimationFrame(update);
+  };
+
+  if (counters.length > 0) {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (reducedMotion) {
+      counters.forEach((counter) => {
+        const value = Number(counter.dataset.value);
+        const decimals = Number(counter.dataset.decimals ?? 0);
+        counter.textContent = formatCounter(value, decimals);
+      });
+    } else {
+      counters.forEach((counter) => {
+        counter.textContent = formatCounter(0, Number(counter.dataset.decimals ?? 0));
+      });
+
+      const observer = new IntersectionObserver(
+        (entries, currentObserver) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+
+            if (!(entry.target instanceof HTMLElement)) return;
+
+            animateCounter(entry.target);
+            currentObserver.unobserve(entry.target);
+          });
+        },
+        { threshold: 0.4 },
+      );
+
+      counters.forEach((counter) => observer.observe(counter));
+    }
+  }
+</script>

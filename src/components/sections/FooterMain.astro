@@ -1,0 +1,32 @@
+---
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="w-full bg-neutral-900 text-neutral-300 py-8 border-t border-neutral-800 shrink-0 mt-auto">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+      
+      <!-- Marca / Descrição Curta -->
+      <div class="text-center md:text-left">
+        <span class="text-lg font-bold text-white tracking-wide">G2NetSul</span>
+        <p class="text-xs text-neutral-400 mt-1">
+          Soluções em conectividade e fibra óptica.
+        </p>
+      </div>
+
+      <!-- Links Rápidos -->
+      <nav aria-label="Navegação do rodapé" class="flex flex-wrap justify-center gap-6 text-sm font-medium">
+        <a href="/planos" class="hover:text-white transition-colors">Planos</a>
+        <a href="/cobertura" class="hover:text-white transition-colors">Cobertura</a>
+        <a href="/privacidade" class="hover:text-white transition-colors">Privacidade</a>
+        <a href="/contato" class="hover:text-white transition-colors">Contato</a>
+      </nav>
+      
+    </div>
+
+    <!-- Divisória e Copyright -->
+    <div class="border-t border-neutral-800 mt-6 pt-6 text-center text-xs text-neutral-500">
+      <p>&copy; {currentYear} Raptorye. Todos os direitos reservados.</p>
+    </div>
+  </div>
+</footer>

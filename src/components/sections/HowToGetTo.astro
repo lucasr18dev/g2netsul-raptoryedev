@@ -1,0 +1,101 @@
+---
+import { cities } from '../../data/stores';
+
+const mapSrc = (address: string) =>
+  `https://www.google.com/maps?q=${encodeURIComponent(address)}&output=embed`;
+
+const firstStore = cities[0].stores[0];
+---
+
+<section
+  id="como-chegar"
+  aria-labelledby="how-title"
+  class="w-full px-4 py-12 sm:px-6 sm:py-16"
+>
+  <div data-how-to-get-it class="mx-auto w-full max-w-7xl rounded-3xl bg-brand-910 p-6 shadow-xl sm:p-8 lg:p-12">
+    <header class="mb-10 text-center">
+      <h2 id="how-title" class="text-3xl font-bold text-brand-50 sm:text-4xl">Como chegar</h2>
+      <p class="mt-3 text-base text-brand-50/75">Escolha a cidade e a loja mais próxima.</p>
+    </header>
+
+    <div class="grid gap-8 lg:grid-cols-2 lg:items-start">
+      <div>
+        {/* Cidades */}
+        <div class="mb-6 flex flex-wrap gap-2" role="group" aria-label="Cidade">
+          {cities.map((city, i) => (
+            <button
+              type="button"
+              data-city={city.id}
+              aria-pressed={i === 0 ? 'true' : 'false'}
+              class="rounded-md px-4 py-2 text-sm font-semibold text-brand-50 transition-colors hover:bg-brand-100/10 hover:text-brand-50 aria-pressed:bg-brand-50 aria-pressed:text-brand-910 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400"
+            >
+              {city.name}
+            </button>
+          ))}
+        </div>
+
+        {/* Lojas de cada cidade */}
+        {cities.map((city, i) => (
+          <ul data-city-panel={city.id} hidden={i !== 0} class="space-y-3">
+            {city.stores.map((store, j) => (
+              <li>
+                <button
+                  type="button"
+                  data-store
+                  data-store-name={store.name}
+                  data-map-src={mapSrc(store.address)}
+                  aria-pressed={i === 0 && j === 0 ? 'true' : 'false'}
+                  class="w-full rounded-xl bg-brand-900/40 p-5 text-left transition-colors hover:bg-brand-900/70 aria-pressed:bg-brand-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400"
+                >
+                  <span class="block text-lg font-semibold text-brand-50">{store.name}</span>
+                  <span class="mt-1 block text-sm text-brand-100">{store.address}</span>
+                  {store.hours && <span class="mt-1 block text-sm text-brand-100/70">{store.hours}</span>}
+                </button>
+              </li>
+            ))}
+          </ul>
+        ))}
+      </div>
+
+      {/* Mapa quadrado */}
+      <div class="aspect-square w-full overflow-hidden rounded-2xl bg-brand-900">
+        <iframe
+          data-map-frame
+          src={mapSrc(firstStore.address)}
+          title={`Mapa: ${firstStore.name}`}
+          class="h-full w-full border-0"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          allowfullscreen
+        ></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-how-to-get-it]');
+
+  if (root) {
+    const cityBtns = root.querySelectorAll<HTMLButtonElement>('[data-city]');
+    const panels = root.querySelectorAll<HTMLElement>('[data-city-panel]');
+    const storeBtns = root.querySelectorAll<HTMLButtonElement>('[data-store]');
+    const frame = root.querySelector<HTMLIFrameElement>('[data-map-frame]')!;
+
+    const selectStore = (btn: HTMLButtonElement) => {
+      storeBtns.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      frame.src = btn.dataset.mapSrc!;
+      frame.title = `Mapa: ${btn.dataset.storeName}`;
+    };
+
+    const selectCity = (id: string) => {
+      cityBtns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.city === id)));
+      panels.forEach((p) => (p.hidden = p.dataset.cityPanel !== id));
+      const first = root.querySelector<HTMLButtonElement>(`[data-city-panel="${id}"] [data-store]`);
+      if (first) selectStore(first);
+    };
+
+    cityBtns.forEach((b) => b.addEventListener('click', () => selectCity(b.dataset.city!)));
+    storeBtns.forEach((b) => b.addEventListener('click', () => selectStore(b)));
+  }
+</script>

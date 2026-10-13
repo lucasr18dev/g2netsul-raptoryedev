@@ -1,0 +1,88 @@
+---
+//src/sections/common/BaseSection.astro
+import type { HTMLAttributes } from 'astro/types';
+
+export type ContainerVariant = 'narrow' | 'default' | 'wide' | 'full';
+export type BgVariant = 'default' | 'muted' | 'dark' | 'brand' | 'none';
+export type OverlayVariant = 'none' | 'light' | 'dark' | 'gradient';
+
+interface Props extends HTMLAttributes<'section'> {
+  fullScreen?: boolean;
+  useContainer?: boolean;
+  containerVariant?: ContainerVariant;
+  bg?: BgVariant;
+  overlay?: OverlayVariant;   // Escurece a imagem p/ dar contraste ao texto
+  bgClass?: string;           // Classes extras na camada de fundo (ex.: máscara)
+  clip?: boolean;             // overflow-hidden opcional
+}
+
+const {
+  class: className = '',
+  fullScreen = false,
+  useContainer = true,
+  containerVariant = 'wide',
+  bg = 'default',
+  overlay = 'none',
+  bgClass = '',
+  clip = true,
+  ...props
+} = Astro.props;
+
+const hasBackground = Astro.slots.has('background');
+
+const bgStyles: Record<BgVariant, string> = {
+  default: 'bg-white text-neutral-900',
+  muted: 'bg-neutral-100 text-neutral-900',
+  dark: 'bg-neutral-900 text-white',
+  brand: 'bg-blue-600 text-white',
+  none: '',
+};
+
+const containerStyles: Record<ContainerVariant, string> = {
+  narrow: 'max-w-3xl',
+  default: 'max-w-5xl',
+  wide: 'max-w-7xl',
+  full: 'max-w-full',
+};
+
+const overlayStyles: Record<OverlayVariant, string> = {
+  none: '',
+  light: 'bg-white/50',
+  dark: 'bg-black/50',
+  gradient: 'bg-gradient-to-b from-black/70 via-black/30 to-black/70',
+};
+---
+
+<section
+  class:list={[
+    'relative isolate w-full',
+    fullScreen ? 'min-h-dvh py-12 flex flex-col justify-center' : 'py-16 md:py-24',
+    clip && 'overflow-hidden',
+    bgStyles[bg],
+    className,
+  ]}
+  {...props}
+>
+  {hasBackground && (
+    <div class:list={['absolute inset-0 -z-10', bgClass]} aria-hidden="true">
+      <slot name="background" />
+      {overlay !== 'none' && (
+        <div class:list={['absolute inset-0', overlayStyles[overlay]]} />
+      )}
+    </div>
+  )}
+
+  {useContainer ? (
+    <div
+      class:list={[
+        'w-full mx-auto px-4 sm:px-6 lg:px-8',
+        fullScreen && 'flex flex-col justify-center flex-1',
+        containerStyles[containerVariant],
+      ]}
+    >
+      <slot />
+    </div>
+  ) : (
+    <slot />
+  )}
+</section>

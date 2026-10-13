@@ -1,0 +1,85 @@
+---
+export const prerender = true;
+
+import MainLayout from '../layouts/MainLayout.astro';
+// import AudienceGate from '../components/AudienceGate.astro';
+import CustomerTools from '../components/sections/CustomerTools.astro';
+import HeroVisitor from '../components/sections/HeroVisitor.astro';
+import PricingCards from '../components/sections/PricingCards.astro';
+import Services from '../components/sections/Services.astro';
+import HowToGetTo from '../components/sections/HowToGetTo.astro';
+import StatsCounter from '../components/ui/StatsCounter.astro';
+import { stats } from '../data/stats';
+// import { parseAudience, setAudience } from '../lib/audience';
+import { getPageContent, type SectionId } from '../data/audience-content';
+
+/*
+// SSR dos cookies temporariamente desativado enquanto a página é gerada como SSG.
+if (Astro.request.method === 'POST') {
+  try {
+    const data = await Astro.request.formData();
+    const choice = parseAudience(data.get('isCustomer'));
+
+    if (choice !== 'unknown') {
+      setAudience(Astro.cookies, choice, Astro.url.protocol === 'https:');
+      return Astro.redirect('/', 303);
+    }
+  } catch {
+    // body inválido / content-type inesperado: ignora e renderiza a página normalmente
+  }
+}
+*/
+
+// SSG serve sempre o conteúdo de visitante, independente do cookie do usuário.
+const content = getPageContent('visitor');
+
+// id usado em audience-content.ts -> componente
+const sectionRegistry: Record<SectionId, (props: any) => any> = {
+  customerTools: CustomerTools,
+  hero: HeroVisitor,
+  pricing: PricingCards,
+  services: Services,
+  howToGetTo: HowToGetTo,
+};
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: 'Sua Empresa',
+  url: Astro.site?.toString(),
+};
+---
+
+<MainLayout
+  title={content.meta.title}
+  description={content.meta.description}
+  image={content.meta.image}
+>
+  {content.structuredData && (
+    <script type="application/ld+json" slot="head" set:html={JSON.stringify(structuredData)} />
+  )}
+
+  <div class="page-shell">
+    <div class="page-bg" aria-hidden="true"></div>
+
+    <div class="contents">
+      {content.sections.map(({ id, props }) => {
+        const Section = sectionRegistry[id];
+        return (
+          <>
+            <Section {...props} />
+            {id === 'hero' && (
+              <div class="px-6 py-6 lg:hidden">
+                <StatsCounter stats={stats} mobile />
+              </div>
+            )}
+          </>
+        );
+      })}
+    </div>
+  </div>
+
+  {/* SSR do gate de audiência por cookie temporariamente desativado para SSG.
+  {audience === 'unknown' && <AudienceGate />}
+  */}
+</MainLayout>

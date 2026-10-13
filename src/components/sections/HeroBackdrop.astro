@@ -1,0 +1,163 @@
+---
+// src/components/hero/HeroBackdrop.astro
+// Painel em gradiente + imagem que "vaza" para cima do painel (efeito de profundidade).
+// Decorativo: fica fora da árvore de acessibilidade.
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  image: ImageMetadata;
+}
+
+const { image } = Astro.props;
+---
+
+<div class="hero-backdrop" aria-hidden="true">
+  <div class="hero-backdrop__visual">
+    <div class="hero-backdrop__logo" aria-hidden="true"></div>
+    <div class="hero-backdrop__image-clip">
+      <Image
+        src={image}
+        alt=""
+        class="hero-backdrop__image"
+        widths={[640, 1024, 1600, 2400]}
+        sizes="(max-width: 767px) 200vw, 90vw"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </div>
+  </div>
+</div>
+
+<style>
+  /*
+    Layout:
+    - Mobile/tablet: o backdrop é um bloco em fluxo, empilhado ABAIXO do texto (linha 1fr do grid).
+    - Desktop (>= 64rem): volta a ser absoluto, ocupando a coluna da direita (left: 40%).
+
+    Ajustes mobile first:
+    - --image-offset-x: negativo move a modelo para a esquerda; positivo, para a direita.
+    - --image-offset-y: positivo move para cima; negativo, para baixo.
+    - A máscara da imagem libera vazamento apenas no topo.
+    - --image-width: tamanho da imagem; --visual-scale escala painel e imagem juntos.
+    Desktop redefine essas variáveis no breakpoint de 64rem, independentemente do mobile.
+  */
+  .hero-backdrop {
+    position: relative;
+    z-index: 0;
+    /* Altura mínima do painel empilhado. Ajuste conforme a proporção da arte. */
+    min-height: clamp(22rem, 55svh, 40rem);
+  }
+
+  .hero-backdrop__visual {
+    --radius: 1.5rem;
+    --top-gap: 0px;
+    --bleed-top: 0px;
+    --image-width: 200%;
+    --image-offset-x: 0px;
+    --image-offset-y: 0px;
+    --visual-scale: 1;
+
+    position: absolute;
+    inset: 0;
+    isolation: isolate;
+    transform: scale(var(--visual-scale));
+    transform-origin: center;
+  }
+
+  .hero-backdrop__image-clip {
+    position: absolute;
+    inset: var(--top-gap) 0 0;
+    z-index: 2;
+    clip-path: inset(
+      calc(var(--bleed-top) * -1) 0 0 0 round var(--radius)
+    );
+  }
+
+  .hero-backdrop__logo {
+    position: absolute;
+    inset: var(--top-gap) 0 0;
+    z-index: 1;
+    border-radius: var(--radius);
+    background-color: color-mix(in srgb, var(--color-brand-50) 30%, transparent);
+    -webkit-mask: url('/logo.svg') center / 140% auto no-repeat;
+    mask: url('/logo.svg') center / 140% auto no-repeat;
+    pointer-events: none;
+  }
+
+  /* Painel em gradiente */
+  .hero-backdrop__visual::before {
+    content: "";
+    position: absolute;
+    inset: var(--top-gap) 0 0;
+    z-index: 0;
+    border-radius: var(--radius);
+    background-image: radial-gradient(
+      ellipse at bottom right,
+      var(--color-brand-400) 0%,
+      var(--color-brand-900) 45%,
+      var(--color-brand-600) 100%
+    );
+    pointer-events: none;
+  }
+
+  .hero-backdrop__image {
+    position: absolute;
+    bottom: var(--image-offset-y);
+    left: calc(50% + var(--image-offset-x));
+    width: var(--image-width);
+    max-width: none;
+    height: auto;
+    transform: translateX(-50%);
+  }
+
+  /* Tablet */
+  @media (width >= 48rem) {
+    .hero-backdrop__visual {
+      --top-gap: clamp(2rem, 7vh, 4rem);
+      /* Vazamento só dentro da folga, para a arte não invadir o texto empilhado acima. */
+      --bleed-top: calc(var(--top-gap) * 0.75);
+      --image-width: min(180vh, 90vw);
+    }
+  }
+
+  /*
+    iPhone 16+ (>= 393px) em layout empilhado: mais área para o texto, modelo intacta.
+    - A modelo continua ancorada embaixo, com o mesmo tamanho (--image-width não muda).
+    - O bloco passa a ter a altura da arte "da cabeça pra baixo" (--head-h); o texto (linha 1fr) ganha todo o resto.
+    - O topo do painel desce: --leak é o quanto a cabeça vaza para cima do painel (--top-gap = --bleed-top = --leak).
+    - --head-h é uma estimativa (1.17 x a largura do card); ajuste o multiplicador se a cabeça cortar ou sobrar folga.
+  */
+  @media (width >= 24.5rem) and (width < 48rem) {
+    .hero-backdrop {
+      --leak: 3.5rem;
+      --head-h: calc((100vw - 2 * var(--hero-gutter, 0.75rem)) * 1.17);
+
+      min-height: var(--head-h);
+    }
+
+    .hero-backdrop__visual {
+      --top-gap: var(--leak);
+      --bleed-top: var(--leak);
+    }
+  }
+
+  /* O backdrop mantém a coluna inteira; posição e escala da arte são ajustadas separadamente. */
+  @media (width >= 64rem) {
+    .hero-backdrop {
+      position: absolute;
+      inset: 0;
+      left: 40%;
+      min-height: 0;
+    }
+
+    .hero-backdrop__visual {
+      --top-gap: clamp(2rem, 7vh, 5rem);
+      --bleed-top: 12vh;
+      --image-width: min(180vh, 180%);
+      --visual-scale: 0.82;
+      --image-offset-x: -4vw;
+      --image-offset-y: 0px;
+    }
+  }
+</style>

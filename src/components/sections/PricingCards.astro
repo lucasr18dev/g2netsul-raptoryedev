@@ -1,0 +1,44 @@
+---
+// PricingCards.astro
+import PlanSelector from '../ui/PlanSelector.jsx';
+import { planCategories, plans } from '../../data/plans';
+import { Flag } from 'lucide-react';
+
+interface Props {
+  title?: string;
+  subtitle?: string;
+}
+
+const {
+  title = 'Encontre a internet ideal para Você',
+  subtitle = 'Qual conexão combina mais com a sua rotina?',
+} = Astro.props;
+---
+<section
+  id="plans"
+  aria-labelledby="plans-title"
+  class="relative isolate flex w-full flex-col justify-center overflow-hidden px-4 pt-16 pb-8 md:pt-24 md:pb-12"
+>
+  <div class="mx-auto w-full max-w-7xl sm:max-w-6xl">
+    <header class="mb-8 text-center">
+      <h2 id="plans-title" class="whitespace-pre-line text-4xl font-black md:font-bold text-brand-910 sm:whitespace-normal sm:text-4xl md:text-[2.75rem]">
+        {title}
+      </h2>
+      <p class="whitespace-pre-line px-4 sm:whitespace-normal mt-8 text-base text-grey-1 font-normal sm:text-lg md:text-base">
+        {subtitle}
+      </p>
+    </header>
+
+    {/* O componente React assume todo o controle interativo dos cards e botões */}
+    <PlanSelector 
+      client:load 
+      planCategories={planCategories} 
+      plans={plans} 
+    />
+
+    {/* Div de Observação Melhorada */}
+    <div class="mt-8 flex items-center justify-center gap-2 text-center text-xs sm:text-sm text-grey-1">
+      <p>Todos os planos estão sujeitos à análise de cobertura.</p>
+    </div>
+  </div>
+</section>

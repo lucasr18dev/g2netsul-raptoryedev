@@ -1,0 +1,42 @@
+---
+// src/sections/HeroVisitor.astro
+// Section do hero para visitantes (não clientes).
+// Aqui fica só a composição: o copy e o layout externo. O visual vive em components/hero/.
+import HeroBackdrop from './HeroBackdrop.astro';
+import HeroContent from './HeroContent.astro';
+import StatsCounter from '../ui/StatsCounter.astro';
+import visitorBanner from '../../assets/model-hero.png';
+import { stats } from '../../data/stats';
+
+// Valores ilustrativos: substitua pelos números reais antes de publicar.
+const content = {
+  // Cada item vira uma linha do H1.
+  title: ['Internet rápida,', 'que não te deixa na mão'],
+  // TODO: trocar pelo texto definitivo.
+  // Aceita <br> para controlar a quebra de linha (renderizado com set:html no HeroContent).
+  description: 'Encontre a Internet quem mais combina com a rotina do seu dia a dia',
+};
+---
+
+<!--
+  Section = gutter da tela (respiro entre o hero e a borda do display).
+  O card em si é o filho `relative`, que ocupa todo o espaço restante.
+-->
+<section
+  id="hero"
+  aria-labelledby="hero-title"
+  class="flex min-h-svh p-(--hero-gutter) [--hero-gutter:0.75rem] sm:[--hero-gutter:1rem] lg:[--hero-gutter:1.25rem]"
+>
+  <div class="relative isolate grid flex-1 grid-rows-[auto_1fr] min-[24.5rem]:max-md:grid-rows-[1fr_auto] lg:grid-cols-[40%_60%] lg:grid-rows-none">
+    <HeroBackdrop image={visitorBanner} />
+    <HeroContent {...content}>
+      <StatsCounter slot="stats" stats={stats} />
+      <a
+        href="#plans"
+        class="block rounded-full bg-brand-910 px-6 py-4 text-center text-sm font-semibold text-brand-50 transition-colors hover:bg-brand-910/85 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900"
+      >
+        Ver Planos
+      </a>
+    </HeroContent>
+  </div>
+</section>

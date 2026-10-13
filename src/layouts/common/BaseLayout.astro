@@ -1,0 +1,52 @@
+---
+// src/layouts/common/BaseLayout.astro
+import type { ComponentProps } from 'astro/types';
+import SEO from '../../components/SEO.astro';
+import '../../styles/global.css';
+
+// As props de SEO vêm direto do componente: se você adicionar uma lá, chega aqui sem retrabalho
+type Props = ComponentProps<typeof SEO> & {
+  bodyClass?: string;
+};
+
+const { bodyClass = '', ...seo } = Astro.props;
+---
+
+<!doctype html>
+<html lang="pt-BR" class="motion-safe:scroll-smooth scroll-pt-20 overflow-x-clip">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+
+    {/* Título + description + canonical + OG + Twitter + theme-color */}
+    <SEO {...seo} />
+
+    {/* Ícones */}
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+
+    {/* Extras da página: preload do hero, JSON-LD, analytics, etc. */}
+    <slot name="head" />
+  </head>
+  <body
+    class:list={[
+      'min-h-dvh flex flex-col overflow-x-clip',
+      'bg-[#f5f5f5] text-neutral-900 antialiased',
+      bodyClass,
+    ]}
+  >
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-md"
+    >
+      Pular para o conteúdo principal
+    </a>
+
+    <slot />
+  </body>
+</html>

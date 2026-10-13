@@ -1,0 +1,112 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "DM Sans", sans-serif;
+
+  --color-brand-50: #fdfdfd;
+  --color-brand-100: #cff1ff;
+  --color-brand-400: #60c8fc;
+  --color-brand-600: #013cfc;
+  --color-brand-900: #0031bc;
+  --color-brand-910: #000029;
+  --color-brand-950: #0a0a0a;
+
+  --color-white-1: #f5f5f5;
+  --color-grey-1: #8e9aa8;
+
+  --animate-card-in: card-in 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  @keyframes card-in {
+    from {
+      opacity: 0;
+      transform: translateY(20px) scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+}
+
+@layer base {
+  :where(
+    a[href],
+    area[href],
+    button:not(:disabled),
+    input[type="button"]:not(:disabled),
+    input[type="submit"]:not(:disabled),
+    input[type="reset"]:not(:disabled),
+    input[type="checkbox"]:not(:disabled),
+    input[type="radio"]:not(:disabled),
+    label[for],
+    select:not(:disabled),
+    summary,
+    [onclick],
+    [role="button"]:not([aria-disabled="true"]),
+    [role="link"],
+    [role="tab"],
+    [role="menuitem"]
+  ) {
+    cursor: pointer;
+  }
+
+  :where(
+    button:disabled,
+    input:disabled,
+    select:disabled,
+    [role="button"][aria-disabled="true"]
+  ) {
+    cursor: not-allowed;
+  }
+}
+
+/* ServiceCard: tema em repouso e tema no hover/foco, só com cores brand.
+   O ServiceCard.jsx consome essas variáveis via bg-(--card-*) / text-(--card-*). */
+@layer components {
+  .service-card {
+    --card-bg: var(--color-brand-50);
+    --card-fg: var(--color-brand-950);
+    --card-accent: var(--color-brand-600);
+    --card-accent-fg: var(--color-brand-50);
+    --card-panel: var(--color-brand-100);
+    --card-ring: var(--color-brand-100);
+
+    background-color: var(--card-bg);
+    color: var(--card-fg);
+    box-shadow: inset 0 0 0 1px var(--card-ring);
+    transition:
+      background-color 300ms ease,
+      color 300ms ease,
+      box-shadow 300ms ease;
+  }
+
+  /* Foco por teclado (quando o card é link): mesmo tema do hover + outline */
+  .service-card:focus-visible {
+    --card-bg: var(--color-brand-600);
+    --card-fg: var(--color-brand-50);
+    --card-accent: var(--color-brand-100);
+    --card-accent-fg: var(--color-brand-910);
+    --card-panel: var(--color-brand-900);
+    --card-ring: var(--color-brand-600);
+    outline: 2px solid var(--color-brand-400);
+    outline-offset: 3px;
+  }
+
+  /* Hover só em dispositivos com mouse, para o tema não "grudar" depois do toque no mobile */
+  @media (hover: hover) {
+    .service-card:hover {
+      --card-bg: var(--color-brand-600);
+      --card-fg: var(--color-brand-50);
+      --card-accent: var(--color-brand-100);
+      --card-accent-fg: var(--color-brand-910);
+      --card-panel: var(--color-brand-900);
+      --card-ring: var(--color-brand-600);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .service-card {
+      transition: none;
+    }
+  }
+}

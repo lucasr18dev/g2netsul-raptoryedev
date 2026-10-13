@@ -1,0 +1,57 @@
+---
+// src/components/SEO.astro
+interface Props {
+  title: string;
+  description: string;
+  canonicalUrl?: string;
+  image?: string;
+  imageAlt?: string;
+  noindex?: boolean;
+  type?: 'website' | 'article';
+}
+
+const SITE_NAME = 'G2NetSul';
+const DEFAULT_IMAGE = '/banner-compartilhamento-padrao.jpg'; // 1200x630 em /public
+
+const {
+  title,
+  description,
+  canonicalUrl,
+  image = DEFAULT_IMAGE,
+  imageAlt = SITE_NAME,
+  noindex = false,
+  type = 'website',
+} = Astro.props;
+
+// Fallback evita quebrar o build se "site" não estiver configurado
+const base = Astro.site ?? Astro.url;
+const canonical = new URL(canonicalUrl ?? Astro.url.pathname, base).href;
+const imageUrl = new URL(image, base).href;
+
+// Evita "G2NetSul | ... | G2NetSul" se a página já passar a marca no título
+const fullTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
+---
+
+{/* Básico */}
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+
+{/* Open Graph (Facebook, LinkedIn, WhatsApp) */}
+<meta property="og:type" content={type} />
+<meta property="og:site_name" content={SITE_NAME} />
+<meta property="og:locale" content="pt_BR" />
+<meta property="og:url" content={canonical} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={imageUrl} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={imageAlt} />
+
+{/* Twitter / X: o resto é herdado do Open Graph */}
+<meta name="twitter:card" content="summary_large_image" />
+
+{/* Trocar por #fafafa ou pela cor da marca */}
+<meta name="theme-color" content="#ffffff" />
